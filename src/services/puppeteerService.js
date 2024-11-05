@@ -114,6 +114,10 @@ class PuppeteerService {
     }
   }
 
+  async delay(time) {
+    await delay(time);
+  }
+
 
 }
 
