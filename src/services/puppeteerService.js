@@ -9,11 +9,12 @@ class PuppeteerService {
   async initBrowser() {
     this.browser = await puppeteer.launch(puppeteerConfig);
     this.page = await this.browser.newPage();
+    this.page.on('console', msg => console.log('PAGE LOG:', msg.text())); // Capture console logs
   }
 
   async goToUrl(url) {
     await this.page.goto(url, { waitUntil: 'networkidle2', timeout: 0 });
-    await delay(1000);
+    await delay(1000, 3000); // Wait for 1-2 seconds after page load
   }
 
   async closeBrowser() {
@@ -24,6 +25,8 @@ class PuppeteerService {
     try {
       // Go to Perplexity's homepage
       await this.goToUrl('https://www.perplexity.ai');
+      await this.page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
+
 
       // Array of textarea placeholders to check for the search input
       const textareaPlaceholders = [
@@ -116,9 +119,11 @@ class PuppeteerService {
     }
   }
 
-  async delay(time) {
+  async delay(min, max=min) {
+    const time = Math.floor(Math.random() * (max - min + 1)) + min;
     await delay(time);
   }
+
 
 
 }
