@@ -55,6 +55,8 @@ class PuppeteerService {
 
       if (!textareaFound) {
         console.error("Could not locate the textarea.");
+        // take screenshot of the page
+        await this.page.screenshot({ path: 'textarea-not-found.png', fullPage: true });
         return null; // Exit the method if no textarea was found
       }
 
