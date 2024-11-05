@@ -3,6 +3,7 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const delay = require('../utils/delay');
 const { puppeteerConfig } = require('../../config');
 
+const stealth = StealthPlugin();
 stealth.enabledEvasions.delete('iframe.contentWindow'); // This may raise flags on some sites
 puppeteer.use(stealth);
 
