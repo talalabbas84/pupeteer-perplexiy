@@ -3,17 +3,31 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const delay = require('../utils/delay');
 const { puppeteerConfig } = require('../../config');
 
-puppeteer.use(StealthPlugin());
+stealth.enabledEvasions.delete('iframe.contentWindow'); // This may raise flags on some sites
+puppeteer.use(stealth);
 
 class PuppeteerService {
   async initBrowser() {
     this.browser = await puppeteer.launch(puppeteerConfig);
     this.page = await this.browser.newPage();
+    await this.page.evaluateOnNewDocument(() => {
+      Object.defineProperty(navigator, 'webdriver', { get: () => false });
+      Object.defineProperty(navigator, 'languages', { get: () => ['en-US', 'en'] });
+      Object.defineProperty(navigator, 'platform', { get: () => 'Win32' });
+      Object.defineProperty(navigator, 'plugins', {
+        get: () => [1, 2, 3, 4, 5] // Some sites check for non-zero plugins array
+      });
+    });
+
     this.page.on('console', msg => console.log('PAGE LOG:', msg.text())); // Capture console logs
   }
 
   async goToUrl(url) {
     await this.page.goto(url, { waitUntil: 'networkidle2', timeout: 0 });
+    await this.page.mouse.move(100, 100);
+    await this.page.mouse.down();
+    await this.page.mouse.up();
+    await this.page.keyboard.press('Enter');
     await delay(1000, 3000); // Wait for 1-2 seconds after page load
   }
 
