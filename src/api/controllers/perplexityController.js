@@ -10,6 +10,8 @@ class PerplexityController {
     await puppeteerService.initBrowser();
     try {
       await puppeteerService.goToUrl('https://www.perplexity.ai');
+      // 10 seconds delay to allow the page to load
+      await puppeteerService.delay(10000);
       const loginService = new LoginService(puppeteerService.page);
 
       // Authenticate if needed
